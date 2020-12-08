@@ -7,12 +7,10 @@ import torch
 from tqdm.notebook import tqdm
 from torchvision import transforms
 from torch import nn
-# import galaxy_Dataset as GD
 from torch.utils.data import DataLoader
 import numpy as np
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Subset
-# import galaxy_model
 from model_resnet import *
 import neptune
 from dataloader import *
