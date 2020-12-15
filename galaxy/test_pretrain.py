@@ -37,7 +37,7 @@ dim_feats = model.last_linear.in_features # =2048
 nb_classes = 3
 model.last_linear = nn.Linear(dim_feats, nb_classes).cuda()
 
-# model = torch.nn.DataParallel(model).cuda()
+
 model.load_state_dict(torch.load(r'C:\Users\a\OneDrive - 고려대학교\toyproject\딥러닝\checkpoint\resnet101\_15.pt')['state_dict'])
 model.eval()
 
