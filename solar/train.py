@@ -16,9 +16,8 @@ def train(model, partition, optimizer, loss_fn, args):
 
         # X : [n, 10, 6] input_len, batch_size, input_dim
         # Y : [10, m] batch_size, output_len
-        X = X[:, :, 8:9].transpose(0, 1).float().to(args.device)   # np.swapaxes와 같은 역할, batch_size와 seq_len의 위치를 바꿔줌(위에가 원하는 형태)
-        y_true = y[:, :, 8].float().to(args.device)   # close만 예측하려고 3번째 선택
-        #print(torch.max(X[:, :, 3]), torch.max(y_true))
+        X = X[:, :, 8:9].transpose(0, 1).float().to(args.device)  
+        y_true = y[:, :, 8].float().to(args.device)  
 
         model.zero_grad()
         optimizer.zero_grad()

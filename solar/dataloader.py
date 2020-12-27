@@ -10,7 +10,8 @@ from sklearn.preprocessing import MinMaxScaler
 # file_loc = 'C:/Users/a/OneDrive - 고려대학교/toyproject/태양열/data/'
 # x_seq = 336 
 # y_seq = 96   
-# pd.read_csv(file_loc + 'train' + '.csv').columns
+# pd.read_csv(file_loc + 'train/train' + '.csv').TARGET.max() = 99.9139
+
 
 # data = pd.read_csv(file_loc + '0.csv')
 # for i in range(y_seq):
@@ -36,15 +37,15 @@ class solarDataset(Dataset):
         else:
             pass
 
-        scaler = MinMaxScaler()
-        self.data[['TARGET']] = scaler.fit_transform(self.data[['TARGET']])
+        # scaler = MinMaxScaler()
+        self.data['TARGET'] = self.data['TARGET'] / 100
 
         
     def __len__(self):
         return len(self.data) - (self.x_seq + self.y_seq) + 1
 
     def __getitem__(self, idx):        
-        # log transpose ?
+        # self.data = self.data.apply(lambda x : np.log(x+1) - np.log(x[self.x_seq-1]+1))
         X = self.data.iloc[idx:idx+self.x_seq].values
         y = self.data.iloc[idx+self.x_seq:idx+self.x_seq+self.y_seq].values
         return X, y
@@ -66,15 +67,15 @@ class solarTestDataset(Dataset):
         else:
             pass
 
-        scaler = MinMaxScaler()
-        self.data[['TARGET']] = scaler.fit_transform(self.data[['TARGET']])
+        # scaler = MinMaxScaler()
+        self.data['TARGET'] = self.data['TARGET'] / 100
 
         
     def __len__(self):
         return int(len(self.data) / self.x_seq)
 
     def __getitem__(self, idx):        
-        # log transpose ?
+        # self.data = self.data.apply(lambda x : np.log(x+1) - np.log(x[self.x_seq-1]+1))
         X = self.data.iloc[idx*self.x_seq:(idx+1)*self.x_seq].values
         return X
 

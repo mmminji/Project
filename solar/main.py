@@ -65,4 +65,16 @@ for var1 in list_var1:
                 
         setting, result = experiment(partition, deepcopy(args))
 
-result
+# sub = pd.DataFrame(result['y_pred'].view(-1).to('cpu'))
+# sub['1'] = sub[0]*0.1
+# sub['2'] = sub[0]*0.2
+# sub['3'] = sub[0]*0.3
+# sub['4'] = sub[0]*0.4
+# sub['5'] = sub[0]*0.5
+# sub['6'] = sub[0]*0.6
+# sub['7'] = sub[0]*0.7
+# sub['8'] = sub[0]*0.8
+# sub['9'] = sub[0]*0.9
+# sub = sub * 100
+# sub.to_csv('sub_w100_e100.csv')
+

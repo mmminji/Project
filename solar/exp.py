@@ -4,15 +4,17 @@ from test import *
 from LSTM import *
 import torch.optim as optim
 import time
+from PinballLoss import *
 
 
 def experiment(partition, args):
     
     model = LSTM(args.input_dim, args.hid_dim, args.y_frames, args.n_layers, args.batch_size, args.dropout, args.use_bn)
     model.to(args.device)
-    loss_fn = torch.nn.MSELoss()
+    # loss_fn = torch.nn.MSELoss()
 
-    loss_fn = nn.MSELoss()
+    # loss_fn = nn.MSELoss()
+    loss_fn = PinballLoss()
     if args.optim == 'SGD':
         optimizer = optim.RMSprop(model.parameters(), lr=args.lr, weight_decay=args.l2)
     elif args.optim == 'RMSprop':
