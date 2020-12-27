@@ -76,5 +76,5 @@ for var1 in list_var1:
 # sub['8'] = sub[0]*0.8
 # sub['9'] = sub[0]*0.9
 # sub = sub * 100
-# sub.to_csv('sub_w100_e100.csv')
+# sub.to_csv('sub_w100_e2_p.csv')
 

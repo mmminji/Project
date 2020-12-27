@@ -19,6 +19,7 @@ def validate(model, partition, loss_fn, args):
 
             y_pred = model(X)
             loss = loss_fn(y_pred.view(-1), y_true.view(-1))
+            loss = loss.mean()
 
             val_loss += loss.item()
             val_acc += metric(y_pred, y_true)[0]

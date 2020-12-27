@@ -25,6 +25,7 @@ def train(model, partition, optimizer, loss_fn, args):
 
         y_pred = model(X)
         loss = loss_fn(y_pred.view(-1), y_true.view(-1))
+        loss = loss.mean()
         loss.backward()
         optimizer.step()
 
