@@ -8,6 +8,7 @@ from train import *
 from validation import *
 from test import *
 from LSTM import *
+from GRU import *
 from exp import *
 
 # ====== Random Seed Initialization ====== #
@@ -41,14 +42,15 @@ args.use_bn = True
 # ====== Optimizer & Training ====== #
 args.optim = 'RMSprop' #'RMSprop' #SGD, RMSprop, ADAM...
 args.lr = 0.0001
-args.epoch = 2
-
+args.epoch = 10
+args.quantile = 0.9
 
 # ====== Experiment Variable ====== #
 name_var1 = 'lr'
 name_var2 = 'n_layers'
 list_var1 = [0.001]
 list_var2 = [1]
+
 
 
 trainset = solarDataset(file_loc, 'train', x_seq, y_seq)
@@ -66,6 +68,8 @@ for var1 in list_var1:
         setting, result = experiment(partition, deepcopy(args))
 
 # sub = pd.DataFrame(result['y_pred'].view(-1).to('cpu'))
+df = pd.read_csv('sub_w100_e10_p_0.1.csv')
+df[args.quantile] = result['y_pred'].view(-1).to('cpu')
 # sub['1'] = sub[0]*0.1
 # sub['2'] = sub[0]*0.2
 # sub['3'] = sub[0]*0.3
@@ -75,6 +79,7 @@ for var1 in list_var1:
 # sub['7'] = sub[0]*0.7
 # sub['8'] = sub[0]*0.8
 # sub['9'] = sub[0]*0.9
-# sub = sub * 100
-# sub.to_csv('sub_w100_e2_p.csv')
+df = df * 100
+df.to_csv('sub_w100_e10_p_0.1.csv', index=False)
+df
 

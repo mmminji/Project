@@ -2,6 +2,7 @@ from train import *
 from validation import *
 from test import *
 from LSTM import *
+from GRU import *
 import torch.optim as optim
 import time
 from PinballLoss import *
@@ -14,7 +15,7 @@ def experiment(partition, args):
     # loss_fn = torch.nn.MSELoss()
 
     # loss_fn = nn.MSELoss()
-    loss_fn = PinballLoss()
+    loss_fn = PinballLoss(quantile=args.quantile)
     if args.optim == 'SGD':
         optimizer = optim.RMSprop(model.parameters(), lr=args.lr, weight_decay=args.l2)
     elif args.optim == 'RMSprop':

@@ -3,7 +3,7 @@ import torch
 import numpy as np
 
 class PinballLoss():
-  def __init__(self, quantile=0.10, reduction='none'):
+  def __init__(self, quantile, reduction='none'):
       self.quantile = quantile
       assert 0 < self.quantile
       assert self.quantile < 1
