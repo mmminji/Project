@@ -46,10 +46,10 @@ args.epoch = 10
 args.quantile = 0.9
 
 # ====== Experiment Variable ====== #
-name_var1 = 'lr'
-name_var2 = 'n_layers'
-list_var1 = [0.001]
-list_var2 = [1]
+name_var1 = 'n_layers'
+name_var2 = 'quantile'
+list_var1 = [2]
+list_var2 = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
 
 
@@ -59,6 +59,7 @@ testset = solarTestDataset(file_loc, 'test', x_seq, y_seq)
 
 partition = {'train': trainset, 'val':valset, 'test':testset}
 
+df = pd.DataFrame()
 for var1 in list_var1:
     for var2 in list_var2:
         setattr(args, name_var1, var1)
@@ -66,10 +67,13 @@ for var1 in list_var1:
         print(args)
                 
         setting, result = experiment(partition, deepcopy(args))
+        df[args.quantile] = result['y_pred'].view(-1).to('cpu')
+    df = df * 100
+df.to_csv('sub_w100_e10_p_layer2.csv', index=False)
 
 # sub = pd.DataFrame(result['y_pred'].view(-1).to('cpu'))
-df = pd.read_csv('sub_w100_e10_p_0.1.csv')
-df[args.quantile] = result['y_pred'].view(-1).to('cpu')
+# df = pd.read_csv('sub_w100_e10_p_0.1.csv')
+# df[args.quantile] = result['y_pred'].view(-1).to('cpu')
 # sub['1'] = sub[0]*0.1
 # sub['2'] = sub[0]*0.2
 # sub['3'] = sub[0]*0.3
@@ -79,7 +83,7 @@ df[args.quantile] = result['y_pred'].view(-1).to('cpu')
 # sub['7'] = sub[0]*0.7
 # sub['8'] = sub[0]*0.8
 # sub['9'] = sub[0]*0.9
-df = df * 100
-df.to_csv('sub_w100_e10_p_0.1.csv', index=False)
-df
+# df = df * 100
+# df.to_csv('sub_w100_e10_p_0.1.csv', index=False)
+# df
 
