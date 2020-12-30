@@ -19,7 +19,7 @@ torch.manual_seed(seed)
 parser = argparse.ArgumentParser()
 args = parser.parse_args("")
 # args.exp_name = "exp1_lr"
-args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+args.device = 'cuda:1' if torch.cuda.is_available() else 'cpu'
 
 # ====== Data Loading ====== #
 args.batch_size = 81
@@ -42,7 +42,7 @@ args.use_bn = True
 # ====== Optimizer & Training ====== #
 args.optim = 'RMSprop' #'RMSprop' #SGD, RMSprop, ADAM...
 args.lr = 0.0001
-args.epoch = 10
+args.epoch = 30
 args.quantile = 0.9
 
 # ====== Experiment Variable ====== #
@@ -69,7 +69,7 @@ for var1 in list_var1:
         setting, result = experiment(partition, deepcopy(args))
         df[args.quantile] = result['y_pred'].view(-1).to('cpu')
     df = df * 100
-df.to_csv('sub_w100_e10_p_layer2.csv', index=False)
+df.to_csv('sub_100_e30_p_layer2.csv', index=False)
 
 # sub = pd.DataFrame(result['y_pred'].view(-1).to('cpu'))
 # df = pd.read_csv('sub_w100_e10_p_0.1.csv')
