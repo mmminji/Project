@@ -58,4 +58,4 @@ submission.loc[submission.id.str.contains("Day8"), "q_0.1":] = results_2.sort_in
 submission
 
 
-submission.to_csv('LGBM_.csv', index=False)
+submission.to_csv('LGBM_diff.csv', index=False)
