@@ -93,9 +93,6 @@ scheduler = ReduceLROnPlateau(optimizer, factor=0.01, patience=patience, mode='m
 criterion = nn.CrossEntropyLoss()
 lossMIN = 100000
 
-neptune.init(project_qualified_name='kbh/gggg',
-api_token='eyJhcGlfYWRkcmVzcyI6Imh0dHBzOi8vdWkubmVwdHVuZS5haSIsImFwaV91cmwiOiJodHRwczovL3VpLm5lcHR1bmUuYWkiLCJhcGlfa2V5IjoiMWUzMmM0NjgtOTgxZC00NjQ0LWEwYWYtMDhkZWE3NGUzOGM4In0=')
-
 def NeptuneLog():
     neptune.log_metric('batch_size',batch_sizes) 
     neptune.log_metric('learning_rate',learning_rate)
