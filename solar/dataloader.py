@@ -10,7 +10,7 @@ from sklearn.preprocessing import MinMaxScaler
 # file_loc = 'C:/Users/a/OneDrive - 고려대학교/toyproject/태양열/data/'
 # x_seq = 336 
 # y_seq = 96   
-# pd.read_csv(file_loc + 'train/train' + '.csv').TARGET.max() = 99.9139
+# data = pd.read_csv(file_loc + 'train/train' + '.csv') #.TARGET.max() = 99.9139
 
 
 # data = pd.read_csv(file_loc + '0.csv')
@@ -23,12 +23,14 @@ from sklearn.preprocessing import MinMaxScaler
 
 class solarDataset(Dataset):
 
-    def __init__(self, file_loc, tvt, x_seq, y_seq):
+    def __init__(self, file_loc, tvt, x_seq, y_seq, Hour, Minute):
 
         self.file_loc = file_loc
         self.tvt = tvt  # train, val
         self.x_seq = x_seq
         self.y_seq = y_seq
+        self.Hour = Hour
+        self.Minute = Minute
 
         if self.tvt == 'train':
             self.data = pd.read_csv(self.file_loc + 'train/train.csv')[:42000]
@@ -39,6 +41,7 @@ class solarDataset(Dataset):
 
         # scaler = MinMaxScaler()
         self.data['TARGET'] = self.data['TARGET'] / 100
+        self.data = self.data[(self.data['Hour']==self.Hour) & (self.data['Minute']==self.Minute)]
 
         
     def __len__(self):
@@ -52,12 +55,14 @@ class solarDataset(Dataset):
 
 
 class solarTestDataset(Dataset):
-    def __init__(self, file_loc, tvt, x_seq, y_seq):
+    def __init__(self, file_loc, tvt, x_seq, y_seq, Hour, Minute):
     
         self.file_loc = file_loc
         self.tvt = tvt  # test
         self.x_seq = x_seq
         self.y_seq = y_seq
+        self.Hour = Hour
+        self.Minute = Minute
 
         if self.tvt == 'test':
             self.data = pd.DataFrame()
@@ -69,6 +74,7 @@ class solarTestDataset(Dataset):
 
         # scaler = MinMaxScaler()
         self.data['TARGET'] = self.data['TARGET'] / 100
+        self.data = self.data[(self.data['Hour']==self.Hour) & (self.data['Minute']==self.Minute)]
 
         
     def __len__(self):
