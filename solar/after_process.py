@@ -34,14 +34,37 @@ from tqdm import trange
 # result.reset_index(drop=True, inplace=True)
 # result.to_csv('temp.csv', index=False)
 
-df = pd.read_csv('C:/Users/a/OneDrive - 고려대학교/toyproject/태양열/data/sample_submission.csv')
-result = pd.read_csv('temp.csv')
 
-col_list = df.columns.difference(['id'])
+def after1(df):
+    result = pd.read_csv('temp.csv')
 
-for i in trange(len(result)):
-    index = df[df['id'] == result['file'][i]].index.values[0]
-    for col in col_list:
-        df[col][index] = 0
+    col_list = df.columns.difference(['id'])
 
-df.to_csv('C:/Users/a/OneDrive - 고려대학교/toyproject/태양열/data/sample_submission_aft.csv', index=False)
+    for i in trange(len(result)):
+        index = df[df['id'] == result['file'][i]].index.values[0]
+        for col in col_list:
+            df[col][index] = 0
+
+    return df
+
+
+def after2(df):
+    result = pd.read_csv('temp.csv')
+
+    col_list = df.columns.difference(['id'])
+
+    for i in trange(len(df)):
+        for j in df.columns.difference(['id']):
+            if df[j][i] < 0:
+                df[j][i] = (df[j][i-1] + df[j][i+1])/2
+
+    for i in trange(len(result)):
+        index = df[df['id'] == result['file'][i]].index.values[0]
+        for col in col_list:
+            df[col][index] = 0
+            
+    return df
+
+# df = pd.read_csv('submission/LGBM_0288,0288_diff48,96_dhi.csv')
+# df = after1(df)
+# df.to_csv('submission/LGBM_0288,0288_diff48,96_dhi_aft3.csv', index=False)

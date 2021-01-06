@@ -46,7 +46,7 @@ def preprocess_data(data, target_lags=[48], weather_lags=[48], is_train=True):
 
 
 df_train = preprocess_data(train, target_lags=[48], weather_lags=[48], is_train=True)
-df_train.iloc[48:96]
+df_train.iloc[:48]
 
 df_test = []
 
@@ -59,7 +59,7 @@ for i in range(81):
 X_test = pd.concat(df_test)
 X_test.shape
 
-X_test.head()
+X_test.head(50)
 
 X_test.duplicated().sum()
 
@@ -123,4 +123,4 @@ submission.loc[submission.id.str.contains("Day8"), "q_0.1":] = results_2.sort_in
 submission
 
 
-submission.to_csv(loc + 'submission_baseline.csv', index=False)
+submission.to_csv('submission/submission_baseline.csv', index=False)

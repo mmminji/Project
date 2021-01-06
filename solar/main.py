@@ -75,7 +75,7 @@ for hour in range(24):
         #         setting, result = experiment(partition, deepcopy(args))
         #         sub[args.quantile] = result['y_pred'].view(-1).to('cpu')
         #     sub = sub * 100
-        # # sub.to_csv('sub_100_e30_m_layer2.csv', index=False)
+        # # sub.to_csv('submission/sub_100_e30_m_layer2.csv', index=False)
 
 
         # ======== 범위 존재안함 ========== #
@@ -95,7 +95,7 @@ for hour in range(24):
         sub = sub * 100
         sub_concat = pd.concat([sub_concat, sub])
         sub_concat = sub_concat.sort_index()
-        # sub.to_csv('sub_100_e30_m_0.5.csv', index=False)
+        # sub.to_csv('submission/sub_100_e30_m_0.5.csv', index=False)
 
 # ======== 후처리 ========== #
 import pandas as pd
@@ -120,5 +120,5 @@ sub = sub.drop([0], axis=1)
 sub.columns = ['id', 'q_0.1', 'q_0.2', 'q_0.3', 'q_0.4', 'q_0.5', 'q_0.6', 'q_0.7',
        'q_0.8', 'q_0.9']
 
-sub.to_csv('sub_m_l2_h50_in1_e50_m48.csv', index=False)
+sub.to_csv('submission/sub_m_l2_h50_in1_e50_m48.csv', index=False)
 

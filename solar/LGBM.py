@@ -1,4 +1,5 @@
-from LGBM_data import *
+from LGBM_data_prepro import *
+from after_process import *
 
 from sklearn.model_selection import train_test_split
 X_train_1, X_valid_1, Y_train_1, Y_valid_1 = train_test_split(df_train.iloc[:, :-2], df_train.iloc[:, -2], test_size=0.3, random_state=0)
@@ -57,5 +58,6 @@ submission.loc[submission.id.str.contains("Day7"), "q_0.1":] = results_1.sort_in
 submission.loc[submission.id.str.contains("Day8"), "q_0.1":] = results_2.sort_index().values
 submission
 
+submission = after1(submission)
+submission.to_csv('submission/LGBM_0288,0288_diff48,96_dhi.csv', index=False)
 
-submission.to_csv('LGBM_diff.csv', index=False)
