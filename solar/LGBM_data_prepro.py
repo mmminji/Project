@@ -12,6 +12,23 @@ loc = 'C:/Users/a/OneDrive - 고려대학교/toyproject/태양열/data_ghi/'
 train = pd.read_csv(loc + 'train/train_prepro.csv', index_col = 0)
 submission = pd.read_csv(loc + 'sample_submission.csv')
 
+def add_daylight(train):
+    train['daylight_Hours'] = 0
+
+    for i in range(train.Day.nunique()):
+        hours = train[(train['Day']==i) & (train['DHI']!=0)]['daylight_Hours'].groupby(train['Day']).count()
+        # train[train['Day']==i]['daylight_Hours'] = hours.values[0]
+        train[i*48:(i+1)*48]['daylight_Hours'] = hours.values[0]
+
+    return train
+
+def add_time(train):
+    train['Temp'] = [0.5 if s == 30 else 0 for s in train['Minute']]
+    train['New_Hour'] = train['Temp'] + train['Hour']
+    train['Hour'] = train['New_Hour']
+    train = train.drop(['Temp', 'New_Hour'], axis=1)
+    return train
+
 def add_season(df):
     df['dhi_win'] = 0
     df['dhi_sum'] = 0
@@ -26,7 +43,6 @@ def add_season(df):
         elif t1.DHI.max() > 488.0:
             df[(6*n)*48: ((6*n)+6)*48]['dhi_sum'] = 1
     return df
-
 
 def create_lag_feats(data, lags, cols):
     
@@ -85,11 +101,18 @@ def add_diff(df, cols, lag_b, lag_a, is_train=True):
 
         return df[['Hour'] + df_cols + diff_cols]
 
+from sklearn import preprocessing
+min_max_scaler = preprocessing.MinMaxScaler()
+
+
 train = train.drop(['winter', 'summer'], axis=1)
 train = add_season(train)
+train = add_daylight(train)
+train = pd.DataFrame(min_max_scaler.fit_transform(train), columns = train.columns)
 df_train = preprocess_data(train, target_lags=[0, 48, 96, 144, 192, 240, 288], weather_lags=[0, 48, 96, 144, 192, 240, 288], is_train=True)
 df_train = add_diff(df_train, ['DHI', 'DNI', 'RH', 'WS', 'T'], 0, 48, is_train=True)
 df_train = add_diff(df_train, ['DHI', 'DNI', 'RH', 'WS', 'T'], 48, 96, is_train=True)
+
 
 df_test = []
 
@@ -98,13 +121,15 @@ for i in range(81):
     temp = pd.read_csv(file_path, index_col = 0)
     temp = temp.drop(['winter', 'summer'], axis=1)
     temp = add_season(temp)
+    temp = add_daylight(temp)
+    temp = pd.DataFrame(min_max_scaler.fit_transform(temp), columns = temp.columns)
     temp = preprocess_data(temp, target_lags=[0, 48, 96, 144, 192, 240, 288], weather_lags=[0, 48, 96, 144, 192, 240, 288], is_train=False).iloc[-48:]
     df_test.append(temp)
+
 
 X_test = pd.concat(df_test)
 X_test = add_diff(X_test, ['DHI', 'DNI', 'RH', 'WS', 'T'], 0, 48, is_train=False)
 X_test = add_diff(X_test, ['DHI', 'DNI', 'RH', 'WS', 'T'], 48, 96, is_train=False)
-# df_train[:48]
+# df_train[:60]
 # df_train
 # X_test[:48]
-

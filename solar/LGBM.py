@@ -17,7 +17,7 @@ def LGBM(q, X_train, Y_train, X_valid, Y_valid, X_test):
     
     # (a) Modeling  
     model = LGBMRegressor(objective='quantile', alpha=q,
-                         n_estimators=10000, bagging_fraction=0.7, learning_rate=0.027, subsample=0.7)                   
+                         n_estimators=10000, bagging_fraction=0.7, learning_rate=0.027, subsample=0.7, random_state=42)                   
                          
                          
     model.fit(X_train, Y_train, eval_metric = ['quantile'], 
@@ -58,6 +58,6 @@ submission.loc[submission.id.str.contains("Day7"), "q_0.1":] = results_1.sort_in
 submission.loc[submission.id.str.contains("Day8"), "q_0.1":] = results_2.sort_index().values
 submission
 
-submission = after1(submission)
-submission.to_csv('submission/LGBM_0288,0288_diff48,96_dhi.csv', index=False)
+submission = after2(submission)
+submission.to_csv('submission/LGBM_daylight_minmax.csv', index=False)
 

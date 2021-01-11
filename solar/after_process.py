@@ -65,6 +65,6 @@ def after2(df):
             
     return df
 
-# df = pd.read_csv('submission/LGBM_0288,0288_diff48,96_dhi.csv')
+# df = pd.read_csv('submission/RF_10000.csv')
 # df = after1(df)
-# df.to_csv('submission/LGBM_0288,0288_diff48,96_dhi_aft3.csv', index=False)
+# df.to_csv('submission/RF_10000_aft1.csv', index=False)
