@@ -12,6 +12,53 @@ loc = 'C:/Users/a/OneDrive - 고려대학교/toyproject/태양열/data_ghi/'
 train = pd.read_csv(loc + 'train/train_prepro.csv', index_col = 0)
 submission = pd.read_csv(loc + 'sample_submission.csv')
 
+
+def hot_time1(df):
+    df['HOT_TIME1'] = 0
+    df['HOT_TIME2'] = 0
+    for i in list(set(df.Day)):
+        for j in list(df[df['Day'] == i].index):
+            if df['TARGET'][j] != 0:
+                break
+        df['HOT_TIME1'][j-1] = 1
+        df['HOT_TIME1'][j] = 1
+        df['HOT_TIME1'][j+1] = 1
+
+        for k in list(df[df['Day'] == i].index)[j-48*i:]:
+            if df['TARGET'][k] == 0:
+                break
+        df['HOT_TIME2'][k-2] = 1
+        df['HOT_TIME2'][k-1] = 1
+        df['HOT_TIME2'][k] = 1
+
+    for i in df[df['TARGET'] == 0].index:
+        df['HOT_TIME1'][i] = 0
+        df['HOT_TIME2'][i] = 0
+
+    return df
+
+def hot_time2(df):
+    df['HOT_TIME'] = 1
+    for i in list(set(df.Day)):
+        for j in list(df[df['Day'] == i].index):
+            if df['TARGET'][j] != 0:
+                break
+        df['HOT_TIME'][j-1] = 0
+        df['HOT_TIME'][j] = 0
+        df['HOT_TIME'][j+1] = 0
+
+        for k in list(df[df['Day'] == i].index)[j-48*i:]:
+            if df['TARGET'][k] == 0:
+                break
+        df['HOT_TIME'][k-2] = 0
+        df['HOT_TIME'][k-1] = 0
+        df['HOT_TIME'][k] = 0
+
+    for i in df[df['TARGET'] == 0].index:
+        df['HOT_TIME'][i] = 0
+
+    return df
+
 def add_daylight(train):
     train['daylight_Hours'] = 0
 
@@ -43,6 +90,13 @@ def add_season(df):
         elif t1.DHI.max() > 488.0:
             df[(6*n)*48: ((6*n)+6)*48]['dhi_sum'] = 1
     return df
+
+def humid_cloud(train):
+    train['high_humid'] = 0
+    train.loc[train[train.RH > 77].index, 'high_humid'] = 1
+    train['cloud'] = 0
+    train.loc[train[(train['T'] < 0) & (train.RH > 77)].index, 'cloud'] = 1
+    return train
 
 def create_lag_feats(data, lags, cols):
     
@@ -101,14 +155,20 @@ def add_diff(df, cols, lag_b, lag_a, is_train=True):
 
         return df[['Hour'] + df_cols + diff_cols]
 
+
+
 from sklearn import preprocessing
 min_max_scaler = preprocessing.MinMaxScaler()
+from sklearn.preprocessing import StandardScaler
+stand_scaler = StandardScaler()
 
-
+# train[train.columns.difference(['TARGET', 'Day'])] = stand_scaler.fit_transform(train[train.columns.difference(['TARGET', 'Day'])])
 train = train.drop(['winter', 'summer'], axis=1)
 train = add_season(train)
 train = add_daylight(train)
-train = pd.DataFrame(min_max_scaler.fit_transform(train), columns = train.columns)
+train = hot_time1(train)
+train = hot_time2(train)
+train = humid_cloud(train)
 df_train = preprocess_data(train, target_lags=[0, 48, 96, 144, 192, 240, 288], weather_lags=[0, 48, 96, 144, 192, 240, 288], is_train=True)
 df_train = add_diff(df_train, ['DHI', 'DNI', 'RH', 'WS', 'T'], 0, 48, is_train=True)
 df_train = add_diff(df_train, ['DHI', 'DNI', 'RH', 'WS', 'T'], 48, 96, is_train=True)
@@ -119,10 +179,13 @@ df_test = []
 for i in range(81):
     file_path = loc + 'test/' + str(i) + '_prepro.csv'
     temp = pd.read_csv(file_path, index_col = 0)
+    # temp[temp.columns.difference(['TARGET', 'Day'])] = stand_scaler.transform(temp[temp.columns.difference(['TARGET', 'Day'])])
     temp = temp.drop(['winter', 'summer'], axis=1)
     temp = add_season(temp)
     temp = add_daylight(temp)
-    temp = pd.DataFrame(min_max_scaler.fit_transform(temp), columns = temp.columns)
+    temp = hot_time1(temp)
+    temp = hot_time2(temp)
+    temp = humid_cloud(temp)
     temp = preprocess_data(temp, target_lags=[0, 48, 96, 144, 192, 240, 288], weather_lags=[0, 48, 96, 144, 192, 240, 288], is_train=False).iloc[-48:]
     df_test.append(temp)
 
@@ -130,6 +193,8 @@ for i in range(81):
 X_test = pd.concat(df_test)
 X_test = add_diff(X_test, ['DHI', 'DNI', 'RH', 'WS', 'T'], 0, 48, is_train=False)
 X_test = add_diff(X_test, ['DHI', 'DNI', 'RH', 'WS', 'T'], 48, 96, is_train=False)
-# df_train[:60]
+
+# df_train[:48]
 # df_train
 # X_test[:48]
+# df_train.to_csv('dftrain.csv', index=False)
